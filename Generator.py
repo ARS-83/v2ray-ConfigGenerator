@@ -5,22 +5,22 @@ import httpx
 import base64
 
 
-# # لینک Shadowsocks
-# ss_link = "ss://MjAyMi1ibGFrZTMtYWVzLTI1Ni1nY206QUYxUGVtVzVGZDhjNW9EOWFJMTIwQ2J1RGMrNFZwYWxGWXQ2MEo1b3p1QT06aWszRGN0M1BWOFRWU1luQi90WkZIM1dFekFSMlgvYTlhL2FWbyt2VXpLRT0@188.245.191.197:55599?type=kcp&headerType=none&seed=B5Vg8K8t79#3aniv1ra"
+# لینک Shadowsocks
+ss_link = "ss://YWVzLTI1Ni1nY206YVNsNVp1b0pRcEA0Ni4xMDEuMjUxLjMyOjIxMDEw@fsdjbfhjdf"
 
-# # جدا کردن بخش رمزگذاری شده
-# encoded_part = ss_link.split('ss://')[1].split('@')[0]
+# جدا کردن بخش رمزگذاری شده
+encoded_part = ss_link.split('ss://')[1].split('@')[0]
 
-# # رمزگشایی Base64
-# decoded_bytes = base64.urlsafe_b64decode(encoded_part + '==')
-# import sys
-# import io
+# رمزگشایی Base64
+decoded_bytes = base64.urlsafe_b64decode(encoded_part + '==')
+import sys
+import io
 
-# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# decoded_str = decoded_bytes.decode('utf-8')
+decoded_str = decoded_bytes.decode('utf-8')
 
-# print( decoded_str)
+print( decoded_str)
 
 
 def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serverName: str):
@@ -99,8 +99,28 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
     #  Get Protocol . Final Step 
     if protocol == "shadowsocks":
        setting = json.loads(stream['settings'])
-       
+       confFirst = f"{setting['method']}:{setting['password']}:{uuid}"
+       Clients = ""
+       decoded_bytes = base64.urlsafe_b64encode(confFirst )
+       if tls == "tls":
+             conf += f"&security={tls}&fp={fingerPrint}&alpn={alpn}{'&allowInsecure=1' if allowInsecure ==True else'' }&sni={sni}"
+       if netType == "tcp" : return  f"{protocol}://{decoded_bytes}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path= {path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
 
+       elif netType == "ws" or netType == "httpupgrade" or netType == "splithttp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path= {path if path!="" else"/"}&host={host}{conf}#{remark}"
+                      
+       elif netType == "kcp": return  f"{protocol}://{decoded_bytes}@{serverName}:{port}?type={netType}&security={tls}&headerType={kcpType}&seed={kcpSeed}#{remark}"             
+            
+       if netType == "grpc":
+            
+            authority = inboundSetting['grpcSettings']['authority']
+           
+            conf  = f"&serviceName={serviceName}&authority={authority}" + conf
+            
+
+            return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path= {path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+
+
+ 
  
     if protocol == "trojan":
         conf = ""
