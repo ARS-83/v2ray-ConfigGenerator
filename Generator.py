@@ -5,22 +5,6 @@ import httpx
 import base64
 
 
-# لینک Shadowsocks
-ss_link = "ss://YWVzLTI1Ni1nY206YVNsNVp1b0pRcEA0Ni4xMDEuMjUxLjMyOjIxMDEw@fsdjbfhjdf"
-
-# جدا کردن بخش رمزگذاری شده
-encoded_part = ss_link.split('ss://')[1].split('@')[0]
-
-# رمزگشایی Base64
-decoded_bytes = base64.urlsafe_b64decode(encoded_part + '==')
-import sys
-import io
-
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-
-decoded_str = decoded_bytes.decode('utf-8')
-
-print( decoded_str)
 
 
 def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serverName: str):
