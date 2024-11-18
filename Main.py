@@ -15,9 +15,15 @@ while True:
  Core.main()
  if Core.value == "1":
   Core.AddServer()
+  
  
- 
+ elif Core.value == "2":
+  Core.EditServer()
+  
+ elif Core.value == "3":
+  Core.GetServerList()
+  
 
 
- if Core.value == "6":
+ elif Core.value == "6":
    sys.exit(1)
