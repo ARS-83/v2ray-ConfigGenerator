@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from print_color import print
 import os
 import sys
