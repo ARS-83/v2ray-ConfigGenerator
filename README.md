@@ -41,3 +41,9 @@
 - httpup request header
 - splithttp 
 - splithttp +  tls - request header
+
+
+### Easy installation
+```sh
+bash <(curl https://raw.githubusercontent.com/ARS-83/v2ray-ConfigGenerator/refs/heads/main/install.sh)
+```
