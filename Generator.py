@@ -60,10 +60,13 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
             
           path = inboundSetting["tcpSettings"]["header"]["request"]["path"][0]
           try:
+           try:
               
              host = inboundSetting["tcpSettings"]["header"]["request"]["headers"]["host"][0]
-          except:
+           except:
              host = inboundSetting["tcpSettings"]["header"]["request"]["headers"]["Host"][0]
+          except:  
+              host = ""       
                  
     elif netType == "ws":
        
@@ -87,9 +90,9 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
        decoded_bytes = base64.urlsafe_b64encode(confFirst )
        if tls == "tls":
              conf += f"&security={tls}&fp={fingerPrint}&alpn={alpn}{'&allowInsecure=1' if allowInsecure ==True else'' }&sni={sni}"
-       if netType == "tcp" : return  f"{protocol}://{decoded_bytes}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path= {path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+       if netType == "tcp" : return  f"{protocol}://{decoded_bytes}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
 
-       elif netType == "ws" or netType == "httpupgrade" or netType == "splithttp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path= {path if path!="" else"/"}&host={host}{conf}#{remark}"
+       elif netType == "ws" or netType == "httpupgrade" or netType == "splithttp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path={path if path!="" else"/"}&host={host}{conf}#{remark}"
                       
        elif netType == "kcp": return  f"{protocol}://{decoded_bytes}@{serverName}:{port}?type={netType}&security={tls}&headerType={kcpType}&seed={kcpSeed}#{remark}"             
             
@@ -100,7 +103,7 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
             conf  = f"&serviceName={serviceName}&authority={authority}" + conf
             
 
-            return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path= {path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+            return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
 
 
  
@@ -108,12 +111,12 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
     if protocol == "trojan":
         conf = ""
         if tls == "reality":
-               conf += f"security={tls}&pbk={publicKey}&fp={fingerPrint}&sni={sni}&sid={shortIds}&spx={spiderX}"             
+               conf += f"&security={tls}&pbk={publicKey}&fp={fingerPrint}&sni={sni}&sid={shortIds}&spx={spiderX}"             
         if tls == "tls":
              conf += f"&security={tls}&fp={fingerPrint}&alpn={alpn}{'&allowInsecure=1' if allowInsecure ==True else'' }&sni={sni}"
-        if netType == "tcp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path= {path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+        if netType == "tcp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
 
-        elif netType == "ws" or netType == "httpupgrade" or netType == "splithttp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path= {path if path!="" else"/"}&host={host}{conf}#{remark}"
+        elif netType == "ws" or netType == "httpupgrade" or netType == "splithttp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path={path if path!="" else"/"}&host={host}{conf}#{remark}"
                       
         elif netType == "kcp": return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&security={tls}&headerType={kcpType}&seed={kcpSeed}#{remark}"             
             
@@ -124,21 +127,20 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
             conf  = f"&serviceName={serviceName}&authority={authority}" + conf
             
 
-            return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path= {path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+            return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
     elif protocol == "vless":
         conf = ""
         if netType == "tcp":
-            if headerType == "http":
-                conf += "&headerType=http"
+
             if tls == "xtls":
                 conf += f"&security={tls}&flow=xtls-rprx-direct"
             if tls == "reality":
-               conf += f"security={tls}&pbk={publicKey}&fp={fingerPrint}&sni={sni}&sid={shortIds}&spx={spiderX}"     
+               conf += f"&security={tls}&pbk={publicKey}&fp={fingerPrint}&sni={sni}&sid={shortIds}&spx={spiderX}"     
             if tls == "tls":
              conf += f"&security={tls}&fp={fingerPrint}&alpn={alpn}{'&allowInsecure=1' if allowInsecure ==True else'' }&sni={sni}"
             if host =="none" :
                 host=""    
-            newConfig = f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path= {path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+            newConfig = f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
         elif netType == "ws":
             if tls == "tls":
              
@@ -155,7 +157,7 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
             if tls == "xtls":
                 conf += "&flow=xtls-rprx-direct"
             if tls == "reality":
-               conf += f"security={tls}&pbk={publicKey}&fp={fingerPrint}&sni={sni}&sid={shortIds}&spx={spiderX}"     
+               conf += f"&security={tls}&pbk={publicKey}&fp={fingerPrint}&sni={sni}&sid={shortIds}&spx={spiderX}"     
             if tls == "tls":
              conf += f"&security={tls}&fp={fingerPrint}&alpn={alpn}{'&allowInsecure=1' if allowInsecure ==True else'' }&sni={sni}"
             newConfig = f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&serviceName={serviceName}#{remark}"
@@ -218,33 +220,3 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
         
         newConfig = f"vmess://{base64_string}"
     return newConfig
-
-gonfig = GetConfig("{\n  \"network\": \"tcp\",\n  \"security\": \"tls\",\n  \"externalProxy\": [],\n  \"tlsSettings\": {\n    \"serverName\": \"ali.com\",\n    \"minVersion\": \"1.2\",\n    \"maxVersion\": \"1.3\",\n    \"cipherSuites\": \"\",\n    \"rejectUnknownSni\": false,\n    \"disableSystemRoot\": false,\n    \"enableSessionResumption\": false,\n    \"certificates\": [\n      {\n        \"certificateFile\": \"ihjbk n\",\n        \"keyFile\": \"bljk\",\n        \"ocspStapling\": 3600,\n        \"oneTimeLoading\": false,\n        \"usage\": \"encipherment\",\n        \"buildChain\": false\n      }\n    ],\n    \"alpn\": [\n      \"h3\",\n      \"h2\",\n      \"http/1.1\"\n    ],\n    \"settings\": {\n      \"allowInsecure\": true,\n      \"fingerprint\": \"chrome\"\n    }\n  },\n  \"tcpSettings\": {\n    \"acceptProxyProtocol\": false,\n    \"header\": {\n      \"type\": \"none\"\n    }\n  }\n}","96e4a691-cf74-44d4-b728-c9c5cee5e59e","ARS","59964","vless","188.245.191.197")
-
-import requests
-
-url = "http://188.245.191.197:8282/21B3KxL4LFPvxQT/panel/inbound/list"
-
-payload = {}
-headers = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0',
-  'Accept': 'application/json, text/plain, */*',
-  'Accept-Language': 'en-US,en;q=0.5',
-  'Accept-Encoding': 'gzip, deflate',
-  'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-  'X-Requested-With': 'XMLHttpRequest',
-  'Origin': 'http://188.245.191.197:8282',
-  'Connection': 'keep-alive',
-  'Referer': 'http://188.245.191.197:8282/21B3KxL4LFPvxQT/panel/inbounds',
-  'Cookie': 'lang=en-US; 3x-ui=MTczMTMzMzI3NHxEWDhFQVFMX2dBQUJFQUVRQUFCMV80QUFBUVp6ZEhKcGJtY01EQUFLVEU5SFNVNWZWVk5GVWhoNExYVnBMMlJoZEdGaVlYTmxMMjF2WkdWc0xsVnpaWExfZ1FNQkFRUlZjMlZ5QWYtQ0FBRUVBUUpKWkFFRUFBRUlWWE5sY201aGJXVUJEQUFCQ0ZCaGMzTjNiM0prQVF3QUFRdE1iMmRwYmxObFkzSmxkQUVNQUFBQUh2LUNHd0VDQVFvMGF6ZHhNREZvWkZZeUFRcFpNMU5IUWtod2JVcHNBQT09fKGIEMa3XL2Q5o6LnOVouUn21wApxAEdh_8wvq8kKtmA',
-  'Content-Length': '0'
-}
-
-# response = requests.request("POST", url, headers=headers, data=payload)
-
-# print(response.text)
-
-# dataConveerted = json.loads(response.text)
-
-
-print(gonfig)

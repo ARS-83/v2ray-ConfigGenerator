@@ -3,7 +3,7 @@ import sqlite3
 from print_color import print
 import requests
 import time
-from Generator import GetConfig
+import Generator 
 import json
 class Core:
     def __init__(self, db: sqlite3.Connection, cursor: sqlite3.Cursor):
@@ -44,25 +44,26 @@ class Core:
         print("\n* Add Server *", color="blue")
         server_url = self.check_data("\nEnter Your URL Server [Menu = 0]:")
         if server_url == "0":
-            return
+            return self.main()
         username = self.check_data("\nEnter Your UserName Server [Menu = 0]:")
         if username == "0":
-            return
+            return self.main()
         password = self.check_data("\nEnter Your Password Server [Menu = 0]:")
         if password == "0":
-            return
+            return self.main()
         name = self.check_data("\nEnter Your Name Server [Menu = 0]:")
         if name == "0":
-            return
+            return self.main()
         domain = self.check_data("\nEnter Your Domain Server [Menu = 0]:")
         if domain == "0":
-            return
+            return self.main()
         try:
             self.cursor.execute("INSERT INTO Server(Name, URL, UserName, Password, Address) VALUES(?,?,?,?,?)",
                                 (name, server_url, username, password, domain))
             self.db.commit()
             print(f"Server added \n", tag="Success", tag_color="green", color="green")
             input("Input Enter Key To Continue :")
+            return self.main()
         except Exception as e:
             print(e.args[0], color="magenta", tag="Error", tag_color="red")
 
@@ -76,7 +77,7 @@ class Core:
             return self.main()
         if server is None:
             print("Server is not defined", tag="Error", tag_color="red", color="magenta")
-            return
+            return self.main()
 
         print(f"""
 Server Found Info :
@@ -193,14 +194,19 @@ Server Found Info :
         server = self.cursor.fetchone()
         if server is None:
             print("Server is not defined", tag="Error", tag_color="red", color="magenta")
-            return
+            input("Input Enter To Back Main :")   
+            return self.main()
         try:
          self.cursor.execute(f"DELETE Server WHERE Id = '{server[0]}'")
          self.db.commit()
          print(f"delete server success \n", tag="Success", tag_color="green", color="green")
-         return
+         input("Input Enter To Back Main :")   
+         return self.main()      
+
         except Exception as e:
                     print(e.args[0], color="magenta", tag="Error", tag_color="red")
+                    input("Input Enter To Back Main :") 
+                    return self.main()
     def get_config(self):
       step = 0
       
@@ -220,10 +226,10 @@ Server Found Info :
             return
         else :step =1
        if step == 1:
-            global inbound
-            inbound = input("Enter Inbound Id Your Server [Main = 0]:")
-            if not inbound.isdigit() : continue
-            if inbound=="0":
+            global inboundId
+            inboundId = input("Enter Inbound Id Your Server [Main = 0]:")
+            if not inboundId.isdigit() : continue
+            if inboundId=="0":
                 return self.main()
             else: step = 2
        if step == 2:
@@ -245,9 +251,9 @@ Server Found Info :
           response = None
           try:
 
-           response =  requests.post(f"{server[3]}/login",data={"username": f"{server[1]}", "password": f"{server[2]}"})
+           response =  requests.post(f"{server[2]}/login",data={"username": f"{server[3]}", "password": f"{server[4]}"})
           except:
-           response =  requests.post(f"{server[3]}/login",data={"username": f"{server[1]}", "password": f"{server[2]}"})
+           response =  requests.post(f"{server[2]}/login",data={"username": f"{server[3]}", "password": f"{server[4]}"})
 
           responseLogon = json.loads(response.text)
           if responseLogon['success'] == False:
@@ -284,9 +290,9 @@ Server Found Info :
           responseLogon = json.loads(response.text)   
           if responseLogon['success'] == True:
               for inbound in responseLogon['obj']:
-                  if inbound['id'] == int(inbound):
+                  if inbound['id'] == int(inboundId):
                       try:
-                       config = GetConfig(inbound,config,ConfigName,inbound['port'],inbound['protocol'],server[3])
+                       config = Generator.GetConfig(inbound,uuid,ConfigName,inbound['port'],inbound['protocol'],server[3])
                        print("create config success fully",tag="success",tag_color="green",color="magenta")
                        print(f"Config : {config}  \n")
                        input("Input Enter To Back Main :")   

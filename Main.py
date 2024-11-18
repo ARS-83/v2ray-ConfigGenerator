@@ -10,9 +10,9 @@ core = Core(db,curser)
 global value
   
  
-
+core.main()
 while True:
- core.main()
+
  if core.value == "1":
   core.add_server()
   
@@ -22,7 +22,9 @@ while True:
   
  elif core.value == "3":
   core.get_server_list()
-  
+ elif core.value == "4":
+  core.get_config()
+    
  elif core.value == "5":
   core.delete_server()
   
