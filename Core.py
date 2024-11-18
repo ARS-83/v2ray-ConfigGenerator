@@ -1,7 +1,10 @@
 import os
 import sqlite3
 from print_color import print
-
+import requests
+import time
+from Generator import GetConfig
+import json
 class Core:
     def __init__(self, db: sqlite3.Connection, cursor: sqlite3.Cursor):
         self.db = db
@@ -65,9 +68,12 @@ class Core:
 
     def edit_server(self):
         os.system("clear")
-        name = input("Please Enter Name Server:")
+        print("\n* Edit Server *", color="blue")
+        name = input("Please Enter Name Server [Main = 0]:")
         self.cursor.execute("SELECT * FROM Server WHERE Name = ?", (name,))
         server = self.cursor.fetchone()
+        if name == "0":
+            return self.main()
         if server is None:
             print("Server is not defined", tag="Error", tag_color="red", color="magenta")
             return
@@ -177,3 +183,130 @@ Server Found Info :
 
         input("Input Enter Key To Continue :")
         return self.main()
+    def delete_server(self):
+        print("\n* Delete Server *", color="blue")
+        os.system("clear")
+        name = input("Please Enter Name Server [Main = 0]:")
+        if name == "0":
+            return self.main()
+        self.cursor.execute("SELECT * FROM Server WHERE Name = ?", (name,))
+        server = self.cursor.fetchone()
+        if server is None:
+            print("Server is not defined", tag="Error", tag_color="red", color="magenta")
+            return
+        try:
+         self.cursor.execute(f"DELETE Server WHERE Id = '{server[0]}'")
+         self.db.commit()
+         print(f"delete server success \n", tag="Success", tag_color="green", color="green")
+         return
+        except Exception as e:
+                    print(e.args[0], color="magenta", tag="Error", tag_color="red")
+    def get_config(self):
+      step = 0
+      
+      while True:
+       if step == 0:
+
+        os.system("clear")
+        print("\n* Get Config Server *", color="blue")
+        name = input("Please Enter Name Server [Main = 0]:")
+        if name == "0":
+            return self.main()
+        self.cursor.execute("SELECT * FROM Server WHERE Name = ?", (name,))
+        global server 
+        server = self.cursor.fetchone()
+        if server is None:
+            print("Server is not defined", tag="Error", tag_color="red", color="magenta")
+            return
+        else :step =1
+       if step == 1:
+            global inbound
+            inbound = input("Enter Inbound Id Your Server [Main = 0]:")
+            if not inbound.isdigit() : continue
+            if inbound=="0":
+                return self.main()
+            else: step = 2
+       if step == 2:
+            global uuid
+            uuid = input("Enter Your Config UUID [Main = 0]:")
+       
+            if uuid=="0":
+                return self.main()
+            else: step = 3
+       if step == 3:
+            global ConfigName
+            ConfigName = input("Enter Your Config Name Config [Main = 0]:")
+       
+            if ConfigName=="0":
+                return self.main()
+            else: step = 4            
+       if step == 4:
+        try:  
+          response = None
+          try:
+
+           response =  requests.post(f"{server[3]}/login",data={"username": f"{server[1]}", "password": f"{server[2]}"})
+          except:
+           response =  requests.post(f"{server[3]}/login",data={"username": f"{server[1]}", "password": f"{server[2]}"})
+
+          responseLogon = json.loads(response.text)
+          if responseLogon['success'] == False:
+              print(f"can not login server. details : {response.text}\n",tag_color="red",tag="Error" ,color="magenta" )
+              input("Input Enter To Back Main :")
+              return self.main()
+          session = ""
+          if len(response.headers.get("Set-Cookie").split("; ") )>= 6:
+      
+             session =  response.headers.get("Set-Cookie").split("; ")[4]  
+             session =session.split(", ")[1]
+          else:
+            session =  response.headers.get("Set-Cookie").split("; ")[0]             
+          origin = server[2].split("/")
+  
+          headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0',
+                    'Accept': 'application/json, text/plain, */*',
+                    'Accept-Language': 'en-US,en;q=0.5',
+                    'Accept-Encoding': 'gzip, deflate',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'Origin': f'{origin[0]}://{origin[2]}',
+                    'Connection': 'keep-alive',
+                    'Referer': f'{server[2]}/panel/inbounds',
+                    'Cookie': f'lang=en-US; {session}'
+                }
+          try:
+              
+               response = requests.request("POST", f"{server[2]}/panel/inbound/list", headers=headers)
+          except:
+             response = requests.request("POST", f"{server[2]}/panel/inbound/list", headers=headers)
+
+          responseLogon = json.loads(response.text)   
+          if responseLogon['success'] == True:
+              for inbound in responseLogon['obj']:
+                  if inbound['id'] == int(inbound):
+                      try:
+                       config = GetConfig(inbound,config,ConfigName,inbound['port'],inbound['protocol'],server[3])
+                       print("create config success fully",tag="success",tag_color="green",color="magenta")
+                       print(f"Config : {config}  \n")
+                       input("Input Enter To Back Main :")   
+                       return self.main()      
+                      except:
+                          print(f"There was a problem while creating the configuration.\n",tag_color="red",tag="Error" ,color="magenta" )
+                          input("Input Enter To Back Main :")   
+                          return self.main()      
+              print(f"can not read data as server. details : {response.text}\n",tag_color="red",tag="Error" ,color="magenta" )
+              input("Input Enter To Back Main :")   
+              return self.main()      
+          else:
+              print(f"can not read data as server. details : {response.text}\n",tag_color="red",tag="Error" ,color="magenta" )
+              input("Input Enter To Back Main :")
+              return self.main() 
+
+          
+        except:
+            print(f"error in Login or Get Data:\n",tag_color="red",tag="Error" ,color="magenta" )
+            input("Input Enter To Back Main :")
+            return self.main()
+        
+   

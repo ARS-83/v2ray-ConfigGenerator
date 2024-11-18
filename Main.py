@@ -3,27 +3,29 @@ import os
 import sys
 # import Generator 
 import sqlite3
-from Core import core
+from Core import Core
 db = sqlite3.connect("./db/ars.db")
 curser = db.cursor()
-Core = core(db,curser)
+core = Core(db,curser)
 global value
   
  
 
 while True:
- Core.main()
- if Core.value == "1":
-  Core.AddServer()
+ core.main()
+ if core.value == "1":
+  core.add_server()
   
  
- elif Core.value == "2":
-  Core.EditServer()
+ elif core.value == "2":
+  core.edit_server()
   
- elif Core.value == "3":
-  Core.GetServerList()
+ elif core.value == "3":
+  core.get_server_list()
+  
+ elif core.value == "5":
+  core.delete_server()
   
 
-
- elif Core.value == "6":
+ elif core.value == "6":
    sys.exit(1)

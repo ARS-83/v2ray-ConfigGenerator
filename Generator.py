@@ -1,6 +1,5 @@
 import json
 
-import httpx
 
 import base64
 
