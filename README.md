@@ -1,4 +1,8 @@
-# A Generator Config For V2ray Client python
+# Generate Config For Client V2ray Methods 
+
+## Can Use In Your Project File ```Generator.py```
+
+
 
 #### Capabilities
 - Easy Create 
