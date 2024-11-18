@@ -56,7 +56,7 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
         grpcSecurity = inboundSetting["security"]
     elif netType == "tcp":
         headerType = inboundSetting["tcpSettings"]["header"]["type"]
-        if headerType != "none":
+        if headerType != 'none':
             
           path = inboundSetting["tcpSettings"]["header"]["request"]["path"][0]
           try:
@@ -90,11 +90,23 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
        decoded_bytes = base64.urlsafe_b64encode(confFirst )
        if tls == "tls":
              conf += f"&security={tls}&fp={fingerPrint}&alpn={alpn}{'&allowInsecure=1' if allowInsecure ==True else'' }&sni={sni}"
-       if netType == "tcp" : return  f"{protocol}://{decoded_bytes}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+       if netType == "tcp" : 
+         return (
+    f"{protocol}://{decoded_bytes}@{serverName}:{port}?type={netType}"
+    + (
+        f"&headerType={headerType}&path={path if path != '' else '/'}&host={host}"
+        if headerType != "none"
+        else ""
+    )
+    + f"{conf}#{remark}"
+)
 
-       elif netType == "ws" or netType == "httpupgrade" or netType == "splithttp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path={path if path!="" else"/"}&host={host}{conf}#{remark}"
+
+       elif netType == "ws" or netType == "httpupgrade" or netType == "splithttp" :
+           return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path={path if path!='' else '/'}&host={host}{conf}#{remark}"
                       
-       elif netType == "kcp": return  f"{protocol}://{decoded_bytes}@{serverName}:{port}?type={netType}&security={tls}&headerType={kcpType}&seed={kcpSeed}#{remark}"             
+       elif netType == "kcp":
+           return  f"{protocol}://{decoded_bytes}@{serverName}:{port}?type={netType}&security={tls}&headerType={kcpType}&seed={kcpSeed}#{remark}"             
             
        if netType == "grpc":
             
@@ -103,7 +115,16 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
             conf  = f"&serviceName={serviceName}&authority={authority}" + conf
             
 
-            return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+            return (
+    f"{protocol}://{uuid}@{serverName}:{port}?type={netType}"
+    + (
+        f"&headerType={headerType}&path={path if path != '' else '/'}&host={host}"
+        if headerType != "none"
+        else ""
+    )
+    + f"{conf}#{remark}"
+)
+
 
 
  
@@ -114,9 +135,19 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
                conf += f"&security={tls}&pbk={publicKey}&fp={fingerPrint}&sni={sni}&sid={shortIds}&spx={spiderX}"             
         if tls == "tls":
              conf += f"&security={tls}&fp={fingerPrint}&alpn={alpn}{'&allowInsecure=1' if allowInsecure ==True else'' }&sni={sni}"
-        if netType == "tcp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+        if netType == "tcp" : 
+           return (
+    f"{protocol}://{uuid}@{serverName}:{port}?type={netType}"
+    + (
+        f"&headerType={headerType}&path={path if path != '' else '/'}&host={host}"
+        if headerType != "none"
+        else ""
+    )
+    + f"{conf}#{remark}"
+)
 
-        elif netType == "ws" or netType == "httpupgrade" or netType == "splithttp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path={path if path!="" else"/"}&host={host}{conf}#{remark}"
+
+        elif netType == "ws" or netType == "httpupgrade" or netType == "splithttp" : return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path={path if path!='' else '/'}&host={host}{conf}#{remark}"
                       
         elif netType == "kcp": return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&security={tls}&headerType={kcpType}&seed={kcpSeed}#{remark}"             
             
@@ -127,7 +158,16 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
             conf  = f"&serviceName={serviceName}&authority={authority}" + conf
             
 
-            return  f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+            return (
+    f"{protocol}://{uuid}@{serverName}:{port}?type={netType}"
+    + (
+        f"&headerType={headerType}&path={path if path != '' else '/'}&host={host}"
+        if headerType != "none"
+        else ""
+    )
+    + f"{conf}#{remark}"
+)
+
     elif protocol == "vless":
         conf = ""
         if netType == "tcp":
@@ -140,13 +180,22 @@ def GetConfig(stream:dict, uuid: str, email: str, port: str, protocol: str, serv
              conf += f"&security={tls}&fp={fingerPrint}&alpn={alpn}{'&allowInsecure=1' if allowInsecure ==True else'' }&sni={sni}"
             if host =="none" :
                 host=""    
-            newConfig = f"{protocol}://{uuid}@{serverName}:{port}?type={netType}{f'&headerType={headerType}&path={path if path!="" else"/"}&host={host}' if headerType != "none" else ''}{conf}#{remark} "
+            newConfig = (
+    f"{protocol}://{uuid}@{serverName}:{port}?type={netType}"
+    + (
+        f"&headerType={headerType}&path={path if path != '' else '/'}&host={host}"
+        if headerType != "none"
+        else ""
+    )
+    + f"{conf}#{remark}"
+)
+
         elif netType == "ws":
             if tls == "tls":
              
              conf += f"&security={tls}&fp={fingerPrint}&alpn={alpn}{'&allowInsecure=1' if allowInsecure == True else'' }&sni={sni}"
 
-            newConfig = f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path={path if path!="" else"/"}&host={host}{conf}#{remark} "
+            newConfig = f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&path={path if path!='' else '/'}&host={host}{conf}#{remark} "
         elif netType == "kcp":
             newConfig = f"{protocol}://{uuid}@{serverName}:{port}?type={netType}&security={tls}&headerType={kcpType}&seed={kcpSeed}#{remark}"
         elif netType == "grpc":
