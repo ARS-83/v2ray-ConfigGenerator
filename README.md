@@ -9,6 +9,10 @@
 - Full Support Methods
 - Can Use In Your Project 
 
+### Easy installation
+```sh
+bash <(curl https://raw.githubusercontent.com/ARS-83/v2ray-ConfigGenerator/refs/heads/main/install.sh)
+```
 
 >> Protocol Supported : Trojan Vless Vmees ShadowSocks 
 
@@ -43,7 +47,3 @@
 - splithttp +  tls - request header
 
 
-### Easy installation
-```sh
-bash <(curl https://raw.githubusercontent.com/ARS-83/v2ray-ConfigGenerator/refs/heads/main/install.sh)
-```
