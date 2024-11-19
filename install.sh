@@ -11,5 +11,5 @@ pip install -r requirements.txt
 chmod +x Main.py
 chmod 755 ./db
 chmod 644 ./db/ars.db
-
+mkdir "/etc/generatordb"
 sudo ln -s /$current_folder/v2ray-ConfigGenerator/Main.py /usr/local/bin/generator
