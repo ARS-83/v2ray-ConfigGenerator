@@ -5,7 +5,7 @@ import sys
 # import Generator 
 import sqlite3
 from Core import Core
-db = sqlite3.connect("./db/ars.db")
+db = sqlite3.connect("/etc/generatordb/ars.db")
 curser = db.cursor()
 core = Core(db,curser)
 global value
